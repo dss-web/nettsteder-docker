@@ -19,7 +19,7 @@ The following changes have been made in this custom image:
 * Latest WordPress version
 
 
-Based on the Setting up multi-container configuration for Web App for Containers [tutorial](https://docs.microsoft.com/en-us/azure/app-service/containers/tutorial-multi-container-app).
+Based on the "Create a multi-container (preview) app in Web App for Containers" [tutorial](https://docs.microsoft.com/en-us/azure/app-service/containers/tutorial-multi-container-app).
 
 ## Use
 
