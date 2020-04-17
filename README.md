@@ -12,11 +12,18 @@ The following changes have been made in this custom image:
 * [Uses App Setting for Redis host name in WordPress wp-config.php.]()
 * [Uses Redis Object Cache 1.3.8 WordPress plugin.]()
 
-**NOTE: The settings above will be changed to**
+**TODO: The settings above will be changed to:**
 
 * LEMP Stack
 * PHP 7.3
-* Latest WordPress version
+* Add wp-cli to `docker-entrypoint.sh`
+* In `docker-entrypoint.sh`, use wp-cli to:
+	* Install/Update latest WordPress version
+	* Configure multisite
+	* Update `wp-config.php`
+* Add support for local docker deployment.
+* Add Azure Front Door using `az-deploy.sh`
+
 
 
 Based on the "Create a multi-container (preview) app in Web App for Containers" [tutorial](https://docs.microsoft.com/en-us/azure/app-service/containers/tutorial-multi-container-app).
