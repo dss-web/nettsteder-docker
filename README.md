@@ -23,13 +23,13 @@ Based on the Setting up multi-container configuration for Web App for Containers
 
 ## Use
 
-`az login` eller gå til https://shell.azure.com/
+`az login` or go to https://shell.azure.com/
 
 `git clone https://github.com/dss-web/nettsteder-docker`
 
 `cd nettsteder-docker`
 
-Update the variables in [az-build.sh](az-build.sh)
+Update the following variables in [az-build.sh](az-build.sh)
 
 ```sh
 LOCATION = "Norway East"
@@ -42,4 +42,4 @@ ADMINPASSWORD = ""
 
 `sh az-build.sh`
 
-When az-build.sh is done, open `http://<app-name>.azurewebsites.net` and finish WordPress configuration.
+When `az-build.sh` is done, open `http://<APPNAME>.azurewebsites.net` and finish the WordPress configuration.
