@@ -21,3 +21,23 @@ The following changes have been made in this custom image:
 
 Based on the Setting up multi-container configuration for Web App for Containers [tutorial](https://docs.microsoft.com/en-us/azure/app-service/containers/tutorial-multi-container-app).
 
+## Use
+
+`git clone https://github.com/dss-web/nettsteder-docker`
+
+`cd nettsteder-docker`
+
+Update the variables in [az-build.sh](az-build.sh)
+
+```sh
+LOCATION = "Norway East"
+RESOURCEGROUP = ""
+SERVICEPLAN = ""
+APPNAME = ""
+MYSQLSERVERNAME = ""
+ADMINPASSWORD = ""
+```
+
+`az login`
+
+`sh az-build.sh`
