@@ -23,6 +23,8 @@ Based on the Setting up multi-container configuration for Web App for Containers
 
 ## Use
 
+`az login` eller gå til https://shell.azure.com/
+
 `git clone https://github.com/dss-web/nettsteder-docker`
 
 `cd nettsteder-docker`
@@ -37,7 +39,5 @@ APPNAME = ""
 MYSQLSERVERNAME = ""
 ADMINPASSWORD = ""
 ```
-
-`az login`
 
 `sh az-build.sh`
