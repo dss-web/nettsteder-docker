@@ -21,7 +21,7 @@ The following changes have been made in this custom image:
 
 Based on the "Create a multi-container (preview) app in Web App for Containers" [tutorial](https://docs.microsoft.com/en-us/azure/app-service/containers/tutorial-multi-container-app).
 
-## Use
+## Deploy
 
 `az login` or go to https://shell.azure.com/
 
@@ -29,7 +29,7 @@ Based on the "Create a multi-container (preview) app in Web App for Containers" 
 
 `cd nettsteder-docker`
 
-Update the following variables in [az-build.sh](az-build.sh)
+Update the following variables in [az-deploy.sh](az-deploy.sh)
 
 ```sh
 LOCATION = "Norway East"
@@ -40,6 +40,10 @@ MYSQLSERVERNAME = ""
 ADMINPASSWORD = ""
 ```
 
-`sh az-build.sh`
+`sh az-deploy.sh`
 
-When `az-build.sh` is done, open `http://<APPNAME>.azurewebsites.net` and finish the WordPress configuration.
+When `az-deploy.sh` is done, open `http://<APPNAME>.azurewebsites.net` and finish the WordPress configuration.
+
+## Clean up deployment
+
+`az group delete --name <RESOURCEGROUP>`
