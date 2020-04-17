@@ -41,3 +41,5 @@ ADMINPASSWORD = ""
 ```
 
 `sh az-build.sh`
+
+When az-build.sh is done, open `http://<app-name>.azurewebsites.net` and finish WordPress configuration.
