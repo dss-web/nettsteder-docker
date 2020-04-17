@@ -1,6 +1,8 @@
 
 # Nettsteder on Azure
 
+Copied from https://github.com/Azure-Samples/multicontainerwordpress
+
 ## Multi-container using Docker Compose in Azure Web App for Containers
 This custom image is based on the 'official image' of [WordPress from Docker Hub](https://hub.docker.com/_/wordpress/).
 
@@ -12,7 +14,7 @@ The following changes have been made in this custom image:
 * [Uses App Setting for Redis host name in WordPress wp-config.php.]()
 * [Uses Redis Object Cache 1.3.8 WordPress plugin.]()
 
-**TODO: The settings above will be changed to:**
+## TODO: The settings above will be changed to:
 
 * LEMP Stack
 * PHP 7.3
@@ -24,9 +26,6 @@ The following changes have been made in this custom image:
 * Add support for local docker deployment.
 * Add Azure Front Door using `az-deploy.sh`
 
-
-
-Based on the "Create a multi-container (preview) app in Web App for Containers" [tutorial](https://docs.microsoft.com/en-us/azure/app-service/containers/tutorial-multi-container-app).
 
 ## Deploy
 
