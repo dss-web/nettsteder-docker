@@ -18,7 +18,7 @@ The following changes have been made in this custom image:
 
 * LEMP Stack
 * PHP 7.3
-* Add wp-cli to `docker-entrypoint.sh`
+* Add [wp-cli](https://make.wordpress.org/cli/handbook/installing/) to `docker-entrypoint.sh`
 * In `docker-entrypoint.sh`, use wp-cli to:
 	* Install/Update latest WordPress version
 	* Configure multisite
@@ -49,6 +49,10 @@ ADMINPASSWORD = ""
 `sh az-deploy.sh`
 
 When `az-deploy.sh` is done, open `http://<APPNAME>.azurewebsites.net` and finish the WordPress configuration.
+
+## Logs
+
+If you run into issues using multiple containers, you can access the container logs by browsing to: `https://<APPNAME>.scm.azurewebsites.net/api/logs/docker`
 
 ## Clean up deployment
 
