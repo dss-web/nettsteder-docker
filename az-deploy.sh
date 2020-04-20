@@ -2,14 +2,15 @@
 
 set -e  # stops your script if any simple command fails.
 
-LOCATION = "Norway East"
-RESOURCEGROUP = ""
-SERVICEPLAN = ""
-APPNAME = ""
-MYSQLSERVERNAME = ""
-ADMINPASSWORD = ""
+LOCATION="norwayeast" #List of available regions is 'centralus,eastasia,southeastasia,eastus,eastus2,westus,westus2,northcentralus,southcentralus,westcentralus,northeurope,westeurope,japaneast,japanwest,brazilsouth,australiasoutheast,australiaeast,westindia,southindia,centralindia,canadacentral,canadaeast,uksouth,ukwest,koreacentral,koreasouth,francecentral,southafricanorth,uaenorth,australiacentral,switzerlandnorth,germanywestcentral,norwayeast'.
+RESOURCEGROUP=""
+SERVICEPLAN=""
+APPNAME=""
+ADMINPASSWORD=""
+MYSQLSERVERNAME=""
+MYSQLSKU="B_Gen5_2"
 
-if [ -z "$LOCATION" ] || [ -z "$RESOURCEGROUP" ] || [ -z "$SERVICEPLAN" ] || [ -z "$APPNAME" ] || [ -z "$MYSQLSERVERNAME" ] || [ -z "$ADMINPASSWORD" ]; then
+if [ -z "$LOCATION" ] || [ -z "$RESOURCEGROUP" ] || [ -z "$SERVICEPLAN" ] || [ -z "$APPNAME" ]|| [ -z "$ADMINPASSWORD" ] || [ -z "$MYSQLSERVERNAME" ] || [ -z "$MYSQLSKU" ]; then
   echo 'one or more variables are undefined'
   exit 1
 fi
@@ -17,13 +18,13 @@ fi
 
 ## Create
 
-az group create --name $RESOURCEGROUP --location $LOCATION
+az group create --name $RESOURCEGROUP --location "$LOCATION"
 
 az appservice plan create --name $SERVICEPLAN --resource-group $RESOURCEGROUP --sku S1 --is-linux
 
 az webapp create --resource-group $RESOURCEGROUP --plan $SERVICEPLAN --name $APPNAME --multicontainer-config-type compose --multicontainer-config-file docker-compose-wordpress.yml
 
-az mysql server create --resource-group $RESOURCEGROUP --name $MYSQLSERVERNAME  --location $LOCATION --admin-user adminuser --admin-password $ADMINPASSWORD --sku-name B_Gen4_1 --version 5.7
+az mysql server create --resource-group $RESOURCEGROUP --name $MYSQLSERVERNAME  --location "$LOCATION" --admin-user adminuser --admin-password $ADMINPASSWORD --sku-name $MYSQLSKU --version 5.7
 
 az mysql server firewall-rule create --name allAzureIPs --server $MYSQLSERVERNAME --resource-group $RESOURCEGROUP --start-ip-address 0.0.0.0 --end-ip-address 0.0.0.0
 
