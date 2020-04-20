@@ -34,11 +34,7 @@ az mysql db create --resource-group $RESOURCEGROUP --server-name $MYSQLSERVERNAM
 
 az webapp config appsettings set --resource-group $RESOURCEGROUP --name $APPNAME --settings WORDPRESS_DB_HOST="$MYSQLSERVERNAME.mysql.database.azure.com" WORDPRESS_DB_USER="adminuser@$MYSQLSERVERNAME" WORDPRESS_DB_PASSWORD="$ADMINPASSWORD" WORDPRESS_DB_NAME="wordpress" MYSQL_SSL_CA="BaltimoreCyberTrustroot.crt.pem"
 
-az webapp config container set --resource-group $RESOURCEGROUP --name $APPNAME --multicontainer-config-type compose --multicontainer-config-file docker-compose-wordpress.yml
-
 az webapp config appsettings set --resource-group $RESOURCEGROUP --name $APPNAME --settings WEBSITES_ENABLE_APP_SERVICE_STORAGE=TRUE
-
-az webapp config container set --resource-group $RESOURCEGROUP --name $APPNAME --multicontainer-config-type compose --multicontainer-config-file docker-compose-wordpress.yml
 
 az webapp config appsettings set --resource-group $RESOURCEGROUP --name $APPNAME --settings WP_REDIS_HOST="redis"
 
