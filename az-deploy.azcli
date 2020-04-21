@@ -25,8 +25,6 @@ az mysql server firewall-rule create --name allAzureIPs --server $MYSQLSERVERNAM
 az mysql db create --resource-group $RESOURCEGROUP --server-name $MYSQLSERVERNAME --name wordpress
 
 
-storageAccountName="mystorageacct$RANDOM"
-
 # https://docs.microsoft.com/en-gb/azure/storage/common/storage-account-create?tabs=azure-cli
 az storage account create \
     --resource-group $RESOURCEGROUP \
@@ -37,12 +35,10 @@ az storage account create \
     --enable-large-file-share
 
 
-storageAccountKey=$(az storage account keys list \
-    --resource-group $RESOURCEGROUP \
-    --account-name $storageAccountName \
-    --query "[0].value" | tr -d '"')
+storageAccountKey=$(az storage account keys list --resource-group $RESOURCEGROUP --account-name $storageAccountName --query "[0].value" | tr -d '"')
 
-shareName="wpcontent"
+# https://docs.microsoft.com/en-us/azure/storage/files/storage-how-to-use-files-cli
+
 az storage share create --account-name $storageAccountName --account-key $storageAccountKey --name $shareName --quota 512
 
 
@@ -56,8 +52,8 @@ az webapp config appsettings set --resource-group $RESOURCEGROUP --name $APPNAME
 
 # az webapp config container set --resource-group $RESOURCEGROUP --name $APPNAME --multicontainer-config-type compose --multicontainer-config-file docker-compose-wordpress.yml
 
-az webapp config appsettings set --resource-group $RESOURCEGROUP --name $APPNAME --settings WEBSITES_ENABLE_APP_SERVICE_STORAGE=FALSE
-az webapp config appsettings set --resource-group $RESOURCEGROUP --name $APPNAME --settings WEBAPP_STORAGE_HOME=WordPressContent
+az webapp config appsettings set --resource-group $RESOURCEGROUP --name $APPNAME --settings WEBSITES_ENABLE_APP_SERVICE_STORAGE="true"
+az webapp config appsettings set --resource-group $RESOURCEGROUP --name $APPNAME --settings WEBAPP_STORAGE_HOME="WordPressContent"
 
 # az webapp config container set --resource-group $RESOURCEGROUP --name $APPNAME --multicontainer-config-type compose --multicontainer-config-file docker-compose-wordpress.yml
 
