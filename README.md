@@ -24,7 +24,7 @@ The following changes have been made in this custom image:
 	* Configure multisite
 	* Update `wp-config.php`
 * Add support for local docker deployment.
-* Add Azure Front Door using `az-deploy.sh`
+* Add Azure Front Door using `az-deploy.azcli`
 
 
 ## Deploy
@@ -35,7 +35,7 @@ The following changes have been made in this custom image:
 
 `cd nettsteder-docker`
 
-Update the following variables in [az-deploy.sh](az-deploy.sh)
+Copy `.env-example` to `.env` and Update the following variables
 
 ```sh
 LOCATION = "Norway East"
@@ -46,9 +46,9 @@ MYSQLSERVERNAME = ""
 ADMINPASSWORD = ""
 ```
 
-`sh az-deploy.sh`
+`sh az-deploy.azcli`
 
-When `az-deploy.sh` is done, open `http://<APPNAME>.azurewebsites.net` and finish the WordPress configuration.
+When `az-deploy.azcli` is done, open `http://<APPNAME>.azurewebsites.net` and finish the WordPress configuration.
 
 ## Logs
 
