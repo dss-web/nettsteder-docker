@@ -2,13 +2,7 @@
 
 set -e  # stops your script if any simple command fails.
 
-LOCATION="norwayeast" #List of available regions is 'centralus,eastasia,southeastasia,eastus,eastus2,westus,westus2,northcentralus,southcentralus,westcentralus,northeurope,westeurope,japaneast,japanwest,brazilsouth,australiasoutheast,australiaeast,westindia,southindia,centralindia,canadacentral,canadaeast,uksouth,ukwest,koreacentral,koreasouth,francecentral,southafricanorth,uaenorth,australiacentral,switzerlandnorth,germanywestcentral,norwayeast'.
-RESOURCEGROUP=""
-SERVICEPLAN=""
-APPNAME=""
-ADMINPASSWORD=""
-MYSQLSERVERNAME=""
-MYSQLSKU="B_Gen5_2"
+source .env
 
 if [ -z "$LOCATION" ] || [ -z "$RESOURCEGROUP" ] || [ -z "$SERVICEPLAN" ] || [ -z "$APPNAME" ]|| [ -z "$ADMINPASSWORD" ] || [ -z "$MYSQLSERVERNAME" ] || [ -z "$MYSQLSKU" ]; then
   echo 'one or more variables are undefined'
