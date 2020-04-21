@@ -4,7 +4,7 @@ services:
   wordpress:
     image: dss-web/nettsteder-docker
     volumes:
-      - ${WEBAPP_STORAGE_HOME}:/site/wwwroot
+      - WordPressContent:/var/www/html
     ports:
       - "8000:80"
     restart: always
