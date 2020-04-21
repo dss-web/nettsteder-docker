@@ -41,6 +41,11 @@ storageAccountKey=$(az storage account keys list --resource-group $RESOURCEGROUP
 
 az storage share create --account-name $storageAccountName --account-key $storageAccountKey --name $shareName --quota 512
 
+az storage directory create \
+   --account-name $storageAccountName \
+   --account-key $storageAccountKey \
+   --share-name $shareName \
+   --name "myDirectory"
 
 # https://docs.microsoft.com/en-us/azure/app-service/containers/how-to-serve-content-from-azure-storage
 az webapp config storage-account add --resource-group $RESOURCEGROUP --name $APPNAME --custom-id WordPressContent --storage-type AzureFiles --account-name $storageAccountName --share-name $shareName --access-key $storageAccountKey --mount-path /site/wwwroot
@@ -52,7 +57,7 @@ az webapp config appsettings set --resource-group $RESOURCEGROUP --name $APPNAME
 
 # az webapp config container set --resource-group $RESOURCEGROUP --name $APPNAME --multicontainer-config-type compose --multicontainer-config-file docker-compose-wordpress.yml
 
-az webapp config appsettings set --resource-group $RESOURCEGROUP --name $APPNAME --settings WEBSITES_ENABLE_APP_SERVICE_STORAGE="true"
+az webapp config appsettings set --resource-group $RESOURCEGROUP --name $APPNAME --settings WEBSITES_ENABLE_APP_SERVICE_STORAGE=true
 az webapp config appsettings set --resource-group $RESOURCEGROUP --name $APPNAME --settings WEBAPP_STORAGE_HOME="WordPressContent"
 
 # az webapp config container set --resource-group $RESOURCEGROUP --name $APPNAME --multicontainer-config-type compose --multicontainer-config-file docker-compose-wordpress.yml
