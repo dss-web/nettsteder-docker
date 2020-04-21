@@ -30,15 +30,40 @@ az mysql server firewall-rule create --name allAzureIPs --server $MYSQLSERVERNAM
 
 az mysql db create --resource-group $RESOURCEGROUP --server-name $MYSQLSERVERNAME --name wordpress
 
+
+storageAccountName="mystorageacct$RANDOM"
+
+az storage account create \
+    --resource-group $RESOURCEGROUP \
+    --name $storageAccountName \
+    --location $region \
+    --kind StorageV2 \
+    --sku Standard_LRS \
+    --enable-large-file-share \
+    --output none
+
+az storage account update --resource-group $RESOURCEGROUP --name $storageAccountName  --enable-large-file-share
+
+storageAccountKey=$(az storage account keys list \
+    --resource-group $RESOURCEGROUP \
+    --account-name $storageAccountName \
+    --query "[0].value" | tr -d '"')
+
+# shareName="myshare"
+# az storage share create --account-name $storageAccountName --account-key $storageAccountKey --name $shareName --quota 512
+
+az webapp config storage-account add --resource-group $RESOURCEGROUP --name $APPNAME --custom-id WordPressContent --storage-type AzureFile --account-name $storageAccountName --share-name wpcontent --access-key $storageAccountKey --mount-path /site/wwwroot
+
 ## Add Settings
 
 az webapp config appsettings set --resource-group $RESOURCEGROUP --name $APPNAME --settings WORDPRESS_DB_HOST="$MYSQLSERVERNAME.mysql.database.azure.com" WORDPRESS_DB_USER="adminuser@$MYSQLSERVERNAME" WORDPRESS_DB_PASSWORD="$ADMINPASSWORD" WORDPRESS_DB_NAME="wordpress" MYSQL_SSL_CA="BaltimoreCyberTrustroot.crt.pem"
 
-az webapp config container set --resource-group $RESOURCEGROUP --name $APPNAME --multicontainer-config-type compose --multicontainer-config-file docker-compose-wordpress.yml
+# az webapp config container set --resource-group $RESOURCEGROUP --name $APPNAME --multicontainer-config-type compose --multicontainer-config-file docker-compose-wordpress.yml
 
 az webapp config appsettings set --resource-group $RESOURCEGROUP --name $APPNAME --settings WEBSITES_ENABLE_APP_SERVICE_STORAGE=TRUE
+az webapp config appsettings set --resource-group $RESOURCEGROUP --name $APPNAME --settings WEBAPP_STORAGE_HOME=WordPressContent
 
-az webapp config container set --resource-group $RESOURCEGROUP --name $APPNAME --multicontainer-config-type compose --multicontainer-config-file docker-compose-wordpress.yml
+# az webapp config container set --resource-group $RESOURCEGROUP --name $APPNAME --multicontainer-config-type compose --multicontainer-config-file docker-compose-wordpress.yml
 
 az webapp config appsettings set --resource-group $RESOURCEGROUP --name $APPNAME --settings WP_REDIS_HOST="redis"
 
