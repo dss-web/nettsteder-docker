@@ -38,12 +38,17 @@ The following changes have been made in this custom image:
 Copy `.env-example` to `.env` and Update the following variables
 
 ```sh
-LOCATION = "Norway East"
-RESOURCEGROUP = ""
-SERVICEPLAN = ""
-APPNAME = ""
-MYSQLSERVERNAME = ""
-ADMINPASSWORD = ""
+LOCATION="norwayeast" #List of available regions is 'centralus,eastasia,southeastasia,eastus,eastus2,westus,westus2,northcentralus,southcentralus,westcentralus,northeurope,westeurope,japaneast,japanwest,brazilsouth,australiasoutheast,australiaeast,westindia,southindia,centralindia,canadacentral,canadaeast,uksouth,ukwest,koreacentral,koreasouth,francecentral,southafricanorth,uaenorth,australiacentral,switzerlandnorth,germanywestcentral,norwayeast'.
+RESOURCEGROUP=""
+SERVICEPLAN=""
+APPNAME=""
+ADMINPASSWORD=""
+MYSQLSERVERNAME=""
+MYSQLSKU="B_Gen5_2"
+STORAGE="StorageV2"
+STORAGESKU="Standard_LRS"
+storageAccountName="mystorageacct$RANDOM"
+shareName="wpcontent"
 ```
 
 `sh az-deploy.azcli`
