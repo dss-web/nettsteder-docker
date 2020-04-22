@@ -29,8 +29,7 @@ RUN set -ex; \
 	rm -rf /var/lib/apt/lists/*
 
 #install redis php extension
-ENV PHPREDIS_VERSION=4.0.2
-
+ENV PHPREDIS_VERSION=5.2.1
 RUN docker-php-source extract \
   && curl -L -o /tmp/redis.tar.gz https://github.com/phpredis/phpredis/archive/$PHPREDIS_VERSION.tar.gz \
   && tar xfz /tmp/redis.tar.gz \
@@ -52,7 +51,11 @@ RUN { \
 
 RUN a2enmod rewrite expires
 
-VOLUME /var/www/html
+RUN apk add openssh && echo "root:Docker!" | chpasswd
+COPY sshd_config /etc/ssh/
+EXPOSE 80 2222
+
+VOLUME /home/site/wwwroot
 
 ENV WORDPRESS_VERSION 4.9.6
 ENV WORDPRESS_SHA1 6992f19163e21720b5693bed71ffe1ab17a4533a
