@@ -77,7 +77,7 @@ RUN { \
 		echo 'html_errors = Off'; \
 	} > /usr/local/etc/php/conf.d/error-logging.ini
 
-VOLUME /var/www/html
+VOLUME /home/site/wwwroot
 
 ENV WORDPRESS_VERSION 5.4
 ENV WORDPRESS_SHA1 d5f1e6d7cadd72c11d086a2e1ede0a72f23d993e
