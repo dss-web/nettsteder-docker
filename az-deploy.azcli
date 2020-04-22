@@ -48,7 +48,7 @@ az mysql db create --resource-group $RESOURCEGROUP --server-name $MYSQLSERVERNAM
 #    --name "myDirectory"
 
 # https://docs.microsoft.com/en-us/azure/app-service/containers/how-to-serve-content-from-azure-storage
-#az webapp config storage-account add --resource-group $RESOURCEGROUP --name $APPNAME --custom-id WordPressContent --storage-type AzureFiles --account-name $storageAccountName --share-name $shareName --access-key $storageAccountKey --mount-path /var/www/html
+# az webapp config storage-account add --resource-group $RESOURCEGROUP --name $APPNAME --custom-id WordPressContent --storage-type AzureFiles --account-name $storageAccountName --share-name $shareName --access-key $storageAccountKey --mount-path /var/www/html
 
 ## Add logging
 # https://docs.microsoft.com/en-us/azure/app-service/containers/configure-custom-container#access-diagnostic-logs

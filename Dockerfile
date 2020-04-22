@@ -1,32 +1,46 @@
-FROM php:7.2-apache
+FROM php:7.3-fpm-alpine
 
-# install the PHP extensions we need
+# persistent dependencies
+RUN apk add --no-cache \
+# in theory, docker-entrypoint.sh is POSIX-compliant, but priority is a working, consistent image
+		bash \
+# BusyBox sed is not sufficient for some of our sed expressions
+		sed \
+# Ghostscript is required for rendering PDF previews
+		ghostscript
+
+# install the PHP extensions we need (https://make.wordpress.org/hosting/handbook/handbook/server-environment/#php-extensions)
 RUN set -ex; \
 	\
-	savedAptMark="$(apt-mark showmanual)"; \
-	\
-	apt-get update; \
-	apt-get install -y --no-install-recommends \
-		libjpeg-dev \
+	apk add --no-cache --virtual .build-deps \
+		$PHPIZE_DEPS \
+		freetype-dev \
+		imagemagick-dev \
+		libjpeg-turbo-dev \
 		libpng-dev \
+		libzip-dev \
 	; \
 	\
-	docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr; \
-	docker-php-ext-install gd mysqli opcache; \
+	docker-php-ext-configure gd --with-freetype-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr; \
+	docker-php-ext-install -j "$(nproc)" \
+		bcmath \
+		exif \
+		gd \
+		mysqli \
+		opcache \
+		zip \
+	; \
+	pecl install imagick-3.4.4; \
+	docker-php-ext-enable imagick; \
 	\
-# reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
-	apt-mark auto '.*' > /dev/null; \
-	apt-mark manual $savedAptMark; \
-	ldd "$(php -r 'echo ini_get("extension_dir");')"/*.so \
-		| awk '/=>/ { print $3 }' \
-		| sort -u \
-		| xargs -r dpkg-query -S \
-		| cut -d: -f1 \
-		| sort -u \
-		| xargs -rt apt-mark manual; \
-	\
-	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
-	rm -rf /var/lib/apt/lists/*
+	runDeps="$( \
+		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local/lib/php/extensions \
+			| tr ',' '\n' \
+			| sort -u \
+			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
+	)"; \
+	apk add --virtual .wordpress-phpexts-rundeps $runDeps; \
+	apk del .build-deps
 
 #install redis php extension
 ENV PHPREDIS_VERSION=5.2.1
@@ -38,6 +52,7 @@ RUN docker-php-source extract \
   && docker-php-ext-install redis \
   && docker-php-source delete
 
+
 # set recommended PHP.ini settings
 # see https://secure.php.net/manual/en/opcache.installation.php
 RUN { \
@@ -46,19 +61,26 @@ RUN { \
 		echo 'opcache.max_accelerated_files=4000'; \
 		echo 'opcache.revalidate_freq=2'; \
 		echo 'opcache.fast_shutdown=1'; \
-		echo 'opcache.enable_cli=1'; \
 	} > /usr/local/etc/php/conf.d/opcache-recommended.ini
+# https://wordpress.org/support/article/editing-wp-config-php/#configure-error-logging
+RUN { \
+# https://www.php.net/manual/en/errorfunc.constants.php
+# https://github.com/docker-library/wordpress/issues/420#issuecomment-517839670
+		echo 'error_reporting = E_ERROR | E_WARNING | E_PARSE | E_CORE_ERROR | E_CORE_WARNING | E_COMPILE_ERROR | E_COMPILE_WARNING | E_RECOVERABLE_ERROR'; \
+		echo 'display_errors = Off'; \
+		echo 'display_startup_errors = Off'; \
+		echo 'log_errors = On'; \
+		echo 'error_log = /dev/stderr'; \
+		echo 'log_errors_max_len = 1024'; \
+		echo 'ignore_repeated_errors = On'; \
+		echo 'ignore_repeated_source = Off'; \
+		echo 'html_errors = Off'; \
+	} > /usr/local/etc/php/conf.d/error-logging.ini
 
-RUN a2enmod rewrite expires
+VOLUME /var/www/html
 
-RUN apk add openssh && echo "root:Docker!" | chpasswd
-COPY sshd_config /etc/ssh/
-EXPOSE 80 2222
-
-VOLUME /home/site/wwwroot
-
-ENV WORDPRESS_VERSION 4.9.6
-ENV WORDPRESS_SHA1 6992f19163e21720b5693bed71ffe1ab17a4533a
+ENV WORDPRESS_VERSION 5.4
+ENV WORDPRESS_SHA1 d5f1e6d7cadd72c11d086a2e1ede0a72f23d993e
 
 RUN set -ex; \
 	curl -o wordpress.tar.gz -fSL "https://wordpress.org/wordpress-${WORDPRESS_VERSION}.tar.gz"; \
@@ -70,5 +92,41 @@ RUN set -ex; \
 
 COPY docker-entrypoint.sh /usr/local/bin/
 
+# # ========
+# # ENV vars
+# # ========
+# # ssh
+# ENV SSH_PASSWD "root:Docker!"
+# ENV SSH_PORT 2222
+# #nginx
+# ENV NGINX_LOG_DIR "/home/log/nginx"
+# #php
+# ENV PHP_HOME "/usr/local/etc/php"
+# ENV PHP_CONF_DIR $PHP_HOME
+# ENV PHP_CONF_FILE $PHP_CONF_DIR"/php.ini"
+# # mariadb
+# ENV MARIADB_DATA_DIR "/home/data/mysql"
+# ENV MARIADB_LOG_DIR "/home/LogFiles/mysql"
+# # phpmyadmin
+# ENV PHPMYADMIN_SOURCE "/usr/src/phpmyadmin"
+# ENV PHPMYADMIN_HOME "/home/phpmyadmin"
+# # wordpress
+# ENV WORDPRESS_SOURCE "/usr/src/wordpress"
+# ENV WORDPRESS_HOME "/home/site/wwwroot"
+# # ====================
+# # ====================
+# # wordpress
+# COPY wordpress_src/. $WORDPRESS_SOURCE/
+# # supervisor
+# COPY supervisord.conf /etc/
+# # php
+# COPY uploads.ini /usr/local/etc/php/conf.d/
+# # nginx
+# COPY nginx_conf/. /etc/nginx/conf.d/
+# #
+# COPY local_bin/. /usr/local/bin/
+# RUN chmod -R +x /usr/local/bin
+# EXPOSE $SSH_PORT 80
+
 ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["apache2-foreground"]
+CMD ["php-fpm"]

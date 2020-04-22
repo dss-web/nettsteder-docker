@@ -2,7 +2,9 @@ version: '3.3'
 
 services:
   wordpress:
-    image: dss-web/nettsteder-docker
+    image: soderlind/nettsteder-docker
+    volumes:
+      - ${WEBAPP_STORAGE_HOME}:/home/site/wwwroot
     ports:
       - "8000:80"
     restart: always

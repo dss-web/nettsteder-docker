@@ -73,14 +73,14 @@ if [[ "$1" == apache2* ]] || [ "$1" == php-fpm ]; then
 			echo "Downloading https://downloads.wordpress.org/plugin/redis-cache.1.3.8.zip"
 			curl -o redis-cache.1.3.8.zip -fsL "https://downloads.wordpress.org/plugin/redis-cache.1.3.8.zip"
 
-			echo "Unzipping redis-cache.1.3.8.zip to /home/site/wwwroot/wp-content/plugins/"
-			unzip -q redis-cache.1.3.8.zip -d /home/site/wwwroot/wp-content/plugins/
+			echo "Unzipping redis-cache.1.3.8.zip to /var/www/html/wp-content/plugins/"
+			unzip -q redis-cache.1.3.8.zip -d /var/www/html/wp-content/plugins/
 
 			echo "Removing redis-cache.1.3.8.zip"
 			rm redis-cache.1.3.8.zip
         fi
 
-        chown -R "$user:$group" /home/site/wwwroot
+        chown -R "$user:$group" /var/www/html
 
 		if [ ! -e .htaccess ]; then
 			# NOTE: The "Indexes" option is disabled in the php:apache base image
