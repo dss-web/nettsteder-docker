@@ -51,9 +51,9 @@ RUN { \
 
 RUN a2enmod rewrite expires
 
-RUN apk add openssh && echo "root:Docker!" | chpasswd
-COPY sshd_config /etc/ssh/
-EXPOSE 80 2222
+# RUN apk add openssh && echo "root:Docker!" | chpasswd
+# COPY sshd_config /etc/ssh/
+# EXPOSE 80 2222
 
 VOLUME /home/site/wwwroot
 
