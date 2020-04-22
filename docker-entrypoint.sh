@@ -235,7 +235,7 @@ EOPHP
 fi
 
 # start sshd
-/usr/sbin/sshd
+# /usr/sbin/sshd
 
 
 exec "$@"
