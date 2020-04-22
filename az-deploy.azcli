@@ -14,7 +14,7 @@ fi
 
 az group create --name $RESOURCEGROUP --location "$LOCATION"
 
-az appservice plan create --name $SERVICEPLAN --resource-group $RESOURCEGROUP --sku S1 --is-linux
+az appservice plan create --name $SERVICEPLAN --resource-group $RESOURCEGROUP --sku $SKU --is-linux
 
 az webapp create --resource-group $RESOURCEGROUP --plan $SERVICEPLAN --name $APPNAME --multicontainer-config-type compose --multicontainer-config-file docker-compose-wordpress.yml
 
@@ -26,42 +26,46 @@ az mysql db create --resource-group $RESOURCEGROUP --server-name $MYSQLSERVERNAM
 
 
 # https://docs.microsoft.com/en-gb/azure/storage/common/storage-account-create?tabs=azure-cli
-az storage account create \
-    --resource-group $RESOURCEGROUP \
-    --name $storageAccountName \
-    --location "$LOCATION" \
-    --kind $STORAGE \
-    --sku $STORAGESKU \
-    --enable-large-file-share
+# az storage account create \
+#     --resource-group $RESOURCEGROUP \
+#     --name $storageAccountName \
+#     --location "$LOCATION" \
+#     --kind $STORAGE \
+#     --sku $STORAGESKU \
+#     --enable-large-file-share
 
 
-storageAccountKey=$(az storage account keys list --resource-group $RESOURCEGROUP --account-name $storageAccountName --query "[0].value" | tr -d '"')
+# storageAccountKey=$(az storage account keys list --resource-group $RESOURCEGROUP --account-name $storageAccountName --query "[0].value" | tr -d '"')
 
 # https://docs.microsoft.com/en-us/azure/storage/files/storage-how-to-use-files-cli
 
-az storage share create --account-name $storageAccountName --account-key $storageAccountKey --name $shareName --quota 512
+# az storage share create --account-name $storageAccountName --account-key $storageAccountKey --name $shareName --quota 512
 
-az storage directory create \
-   --account-name $storageAccountName \
-   --account-key $storageAccountKey \
-   --share-name $shareName \
-   --name "myDirectory"
+# az storage directory create \
+#    --account-name $storageAccountName \
+#    --account-key $storageAccountKey \
+#    --share-name $shareName \
+#    --name "myDirectory"
 
 # https://docs.microsoft.com/en-us/azure/app-service/containers/how-to-serve-content-from-azure-storage
-az webapp config storage-account add --resource-group $RESOURCEGROUP --name $APPNAME --custom-id WordPressContent --storage-type AzureFiles --account-name $storageAccountName --share-name $shareName --access-key $storageAccountKey --mount-path /site/wwwroot
+#az webapp config storage-account add --resource-group $RESOURCEGROUP --name $APPNAME --custom-id WordPressContent --storage-type AzureFiles --account-name $storageAccountName --share-name $shareName --access-key $storageAccountKey --mount-path /var/www/html
 
+## Add logging
+# https://docs.microsoft.com/en-us/azure/app-service/containers/configure-custom-container#access-diagnostic-logs
+
+az webapp log config --resource-group $RESOURCEGROUP --name $APPNAME  --docker-container-logging filesystem
 
 ## Add Settings
 
 az webapp config appsettings set --resource-group $RESOURCEGROUP --name $APPNAME --settings WORDPRESS_DB_HOST="$MYSQLSERVERNAME.mysql.database.azure.com" WORDPRESS_DB_USER="adminuser@$MYSQLSERVERNAME" WORDPRESS_DB_PASSWORD="$ADMINPASSWORD" WORDPRESS_DB_NAME="wordpress" MYSQL_SSL_CA="BaltimoreCyberTrustroot.crt.pem"
 
-# az webapp config container set --resource-group $RESOURCEGROUP --name $APPNAME --multicontainer-config-type compose --multicontainer-config-file docker-compose-wordpress.yml
 
-az webapp config appsettings set --resource-group $RESOURCEGROUP --name $APPNAME --settings WEBSITES_ENABLE_APP_SERVICE_STORAGE=true
-az webapp config appsettings set --resource-group $RESOURCEGROUP --name $APPNAME --settings WEBAPP_STORAGE_HOME="WordPressContent"
+az webapp config appsettings set --resource-group $RESOURCEGROUP --name $APPNAME --settings WEBSITES_ENABLE_APP_SERVICE_STORAGE="TRUE"
 
-# az webapp config container set --resource-group $RESOURCEGROUP --name $APPNAME --multicontainer-config-type compose --multicontainer-config-file docker-compose-wordpress.yml
+# az webapp config appsettings set --resource-group $RESOURCEGROUP --name $APPNAME --settings WEBAPP_STORAGE_HOME="WordPressContent"
 
 az webapp config appsettings set --resource-group $RESOURCEGROUP --name $APPNAME --settings WP_REDIS_HOST="redis"
 
 az webapp config container set --resource-group $RESOURCEGROUP --name $APPNAME --multicontainer-config-type compose --multicontainer-config-file docker-compose-wordpress.yml
+
+az group update --resource-group $RESOURCEGROUP  --tags $TAGS
