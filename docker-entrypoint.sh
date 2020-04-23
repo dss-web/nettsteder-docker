@@ -64,12 +64,6 @@ if [[ "$1" == apache2* ]] || [ "$1" == php-fpm ]; then
 		# Install Redis Cache WordPress Plugin
 	    if [ ! -e wp-content/plugins/redis-cache ]; then
 
-			# Update package repos
-			apt-get update
-
-			# Install unzip
-			apt-get install unzip
-
 			echo "Downloading https://downloads.wordpress.org/plugin/redis-cache.1.3.8.zip"
 			curl -o redis-cache.1.3.8.zip -fsL "https://downloads.wordpress.org/plugin/redis-cache.1.3.8.zip"
 

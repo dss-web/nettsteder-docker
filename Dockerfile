@@ -7,7 +7,8 @@ RUN apk add --no-cache \
 # BusyBox sed is not sufficient for some of our sed expressions
 		sed \
 # Ghostscript is required for rendering PDF previews
-		ghostscript
+		ghostscript \
+		unzip
 
 # install the PHP extensions we need (https://make.wordpress.org/hosting/handbook/handbook/server-environment/#php-extensions)
 RUN set -ex; \
@@ -77,7 +78,7 @@ RUN { \
 		echo 'html_errors = Off'; \
 	} > /usr/local/etc/php/conf.d/error-logging.ini
 
-VOLUME /home/site/wwwroot
+VOLUME /var/www/html
 
 ENV WORDPRESS_VERSION 5.4
 ENV WORDPRESS_SHA1 d5f1e6d7cadd72c11d086a2e1ede0a72f23d993e
